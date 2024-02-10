@@ -11,7 +11,7 @@ export default function Navbar() {
           </svg>
           <input type='text' placeholder='search books...' className='outline-none' />
         </li>
-        <Link to='/' className='flex items-center gap-3 md:-ml-32 cursor-pointer'>
+        <Link to='/' className='flex items-center gap-3 md:-ml-20 cursor-pointer'>
           <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth={1.5} stroke='currentColor' className='w-6 h-6 mt-1'>
             <path
               strokeLinecap='round'
