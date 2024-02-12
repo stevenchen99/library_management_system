@@ -1,18 +1,40 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import useFetch from '@/hooks/useFetch';
+import { useNavigate } from 'react-router-dom';
 
 export default function Create() {
   let [title, setTitle] = useState('');
   let [description, setDescription] = useState('');
   let [newCategory, setNewCategory] = useState('');
-  let [categories, setCategories] = useState(['JS', 'HTML']);
+  let [categories, setCategories] = useState([]);
+
+  let { setPostData, data: book } = useFetch('http://localhost:3001/books', 'POST');
+
+  let navigate = useNavigate();
+
+  useEffect(() => {
+    if (book) {
+      navigate('/');
+    }
+  }, [book]);
 
   let addBookCategory = (e) => {
     setCategories((prev) => [newCategory, ...prev]);
     setNewCategory('');
   };
 
+  let addBook = (e) => {
+    e.preventDefault();
+    let data = {
+      title,
+      description,
+      categories,
+    };
+    setPostData(data);
+  };
+
   return (
-    <form className='w-full max-w-lg mx-auto mt-5'>
+    <div className='w-full max-w-lg mx-auto mt-5'>
       <div className='flex flex-wrap -mx-3 mb-6'>
         <div className='w-full px-3'>
           <label className='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2' htmlFor='grid-title'>
@@ -77,7 +99,7 @@ export default function Create() {
               </span>
             ))}
           </div>
-          <button className='text-white bg-primary px-3 py-2 rounded-2xl flex items-center justify-center gap-1 w-full'>
+          <button onClick={addBook} className='text-white bg-primary px-3 py-2 rounded-2xl flex items-center justify-center gap-1 w-full'>
             <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth={1.5} stroke='currentColor' className='w-6 h-6'>
               <path strokeLinecap='round' strokeLinejoin='round' d='M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z' />
             </svg>
@@ -85,6 +107,6 @@ export default function Create() {
           </button>
         </div>
       </div>
-    </form>
+    </div>
   );
 }
