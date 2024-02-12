@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import useFetch from '@/hooks/useFetch';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import bookImage from '@/assets/book.jpg';
 
 export default function BookDetails() {
@@ -8,11 +8,24 @@ export default function BookDetails() {
   let url = `http://localhost:3001/books/${id}`;
   let { data: book, loading, error } = useFetch(url);
 
+  let navigate = useNavigate();
+
+  useEffect(() => {
+    if (error) {
+      const timeoutId = setTimeout(() => {
+        navigate('/');
+      }, 5000);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [error, navigate]);
+
   return (
     <>
       {error && (
         <div>
           <h4>{error}</h4>
+          <p>Redirecting to Home page...</p>
         </div>
       )}
       {loading && <div>loading...</div>}
