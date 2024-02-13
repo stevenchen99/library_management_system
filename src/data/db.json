@@ -4,49 +4,32 @@
       "id": "1",
       "title": "One Piece",
       "description": "King of Pirates",
-      "categories": [
-        "Anime",
-        "Adventure",
-        "Comedy"
-      ]
+      "categories": ["Anime", "Adventure", "Comedy"]
     },
     {
       "id": "2",
       "title": "One Piece",
       "description": "King of Pirates",
-      "categories": [
-        "Anime",
-        "Adventure",
-        "Comedy"
-      ]
+      "categories": ["Anime", "Adventure", "Comedy"]
     },
     {
       "id": "3",
       "title": "One Piece",
       "description": "King of Pirates",
-      "categories": [
-        "Anime",
-        "Adventure",
-        "Comedy"
-      ]
+      "categories": ["Anime", "Adventure", "Comedy"]
+    },
+
+    {
+      "id": "7b65",
+      "title": "Title 1",
+      "description": "Desc 1",
+      "categories": ["Anime", "Non-fiction", "Travel", "Fantasy"]
     },
     {
-      "id": "2928",
-      "title": "ffaf",
-      "description": "fafaf",
-      "categories": [
-        "fafa",
-        "afaf"
-      ]
-    },
-    {
-      "id": "50c6",
-      "title": "Title",
-      "description": "Desc",
-      "categories": [
-        "ff",
-        "gg"
-      ]
+      "id": "f667",
+      "title": "Title 2",
+      "description": "Desc 2",
+      "categories": ["Category 2", "Category 1"]
     }
   ]
 }

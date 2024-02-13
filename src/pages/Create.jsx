@@ -1,22 +1,45 @@
 import React, { useEffect, useState } from 'react';
 import useFetch from '@/hooks/useFetch';
 import { useNavigate } from 'react-router-dom';
+import { CSSTransition } from 'react-transition-group';
 
 export default function Create() {
   let [title, setTitle] = useState('');
   let [description, setDescription] = useState('');
   let [newCategory, setNewCategory] = useState('');
   let [categories, setCategories] = useState([]);
+  let [showCreating, setShowCreating] = useState(false);
+  let [showCreated, setShowCreated] = useState(false);
 
-  let { setPostData, data: book } = useFetch('http://localhost:3001/books', 'POST');
+  let { setPostData, data: book, loading } = useFetch('http://localhost:3001/books', 'POST');
 
   let navigate = useNavigate();
 
   useEffect(() => {
     if (book) {
-      navigate('/');
+      const timeoutId = setTimeout(() => {
+        navigate('/');
+      }, 5000);
+
+      return () => clearTimeout(timeoutId);
     }
-  }, [book]);
+  }, [book, navigate]);
+
+  useEffect(() => {
+    if (loading && !book) {
+      setShowCreating(true);
+
+      // Simulate asynchronous operation (e.g., API request)
+      setTimeout(() => {
+        setShowCreating(false);
+      }, 2000);
+    }
+    if (!loading && book) {
+      setTimeout(() => {
+        setShowCreated(true);
+      }, 2250);
+    }
+  }, [loading, book, showCreating, showCreated]);
 
   let addBookCategory = (e) => {
     setCategories((prev) => [newCategory, ...prev]);
@@ -100,10 +123,23 @@ export default function Create() {
             ))}
           </div>
           <button onClick={addBook} className='text-white bg-primary px-3 py-2 rounded-2xl flex items-center justify-center gap-1 w-full'>
-            <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth={1.5} stroke='currentColor' className='w-6 h-6'>
-              <path strokeLinecap='round' strokeLinejoin='round' d='M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z' />
-            </svg>
-            <span className='hidden md:block'>Create Book</span>
+            {!loading && !book && (
+              <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth={1.5} stroke='currentColor' className='w-6 h-6'>
+                <path strokeLinecap='round' strokeLinejoin='round' d='M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z' />
+              </svg>
+            )}
+            {/* {!loading && !book && <span className='hidden md:block'>Create Book</span>}
+            {loading && !book && <span className='hidden md:block'>Creating...</span>}
+            {!loading && !!book && <span className='hidden md:block'>Book Created!</span>} */}
+            <>
+              {!loading && !book && <span className='hidden md:block'>Create Book</span>}
+              <CSSTransition in={showCreating} timeout={300} classNames='fade' unmountOnExit>
+                <span className='hidden md:block'>Creating...</span>
+              </CSSTransition>
+              <CSSTransition in={showCreated} timeout={300} classNames='fade' unmountOnExit>
+                <span className='hidden md:block'>Book Created!</span>
+              </CSSTransition>
+            </>
           </button>
         </div>
       </div>

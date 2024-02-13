@@ -11,8 +11,6 @@ function useFetch(url, method = 'GET') {
     let signal = abortController.signal;
     let options = { signal, method };
 
-    setLoading(true);
-
     let fetchData = () =>
       fetch(url, options)
         .then((res) => {
@@ -39,10 +37,12 @@ function useFetch(url, method = 'GET') {
         },
         body: JSON.stringify(postData),
       };
+      setLoading(true);
       fetchData();
     }
 
     if (method === 'GET') {
+      setLoading(true);
       fetchData();
     }
 
