@@ -42,6 +42,10 @@ export default function Create() {
   }, [loading, book, showCreating, showCreated]);
 
   let addBookCategory = (e) => {
+    if (newCategory && categories.includes(newCategory)) {
+      setNewCategory('');
+      return;
+    }
     setCategories((prev) => [newCategory, ...prev]);
     setNewCategory('');
   };
