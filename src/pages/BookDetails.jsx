@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import useFetch from '@/hooks/useFetch';
 import { useNavigate, useParams } from 'react-router-dom';
 import bookImage from '@/assets/book.jpg';
+import useTheme from '../hooks/useTheme';
 
 export default function BookDetails() {
   let { id } = useParams();
@@ -20,6 +21,8 @@ export default function BookDetails() {
     }
   }, [error, navigate]);
 
+  let { isDark } = useTheme();
+
   return (
     <>
       {error && (
@@ -30,7 +33,7 @@ export default function BookDetails() {
       )}
       {loading && <div>loading...</div>}
       {book && (
-        <div className='grid grid-cols-2'>
+        <div className={`${isDark ? 'text-white' : ''} grid grid-cols-2 h-screen`}>
           <img src={bookImage} alt='' />
           <div className='space-y-4'>
             <h1 className='text-2xl font-bold'>{book.title}</h1>

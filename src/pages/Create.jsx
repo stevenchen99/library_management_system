@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import useFetch from '@/hooks/useFetch';
 import { useNavigate } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
+import useTheme from '../hooks/useTheme';
 
 export default function Create() {
   let [title, setTitle] = useState('');
@@ -60,11 +61,13 @@ export default function Create() {
     setPostData(data);
   };
 
+  let { isDark } = useTheme();
+
   return (
-    <div className='w-full max-w-lg mx-auto mt-5'>
+    <div className='w-full max-w-lg mx-auto mt-5 h-screen'>
       <div className='flex flex-wrap -mx-3 mb-6'>
         <div className='w-full px-3'>
-          <label className='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2' htmlFor='grid-title'>
+          <label className={`${isDark ? 'text-white' : ''} block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2`} htmlFor='grid-title'>
             Title
           </label>
           <input
@@ -79,7 +82,7 @@ export default function Create() {
       </div>
       <div className='flex flex-wrap -mx-3 mb-6'>
         <div className='w-full px-3'>
-          <label className='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2' htmlFor='grid-description'>
+          <label className={`${isDark ? 'text-white' : ''} block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2`} htmlFor='grid-description'>
             Description
           </label>
           <textarea
@@ -94,7 +97,7 @@ export default function Create() {
       </div>
       <div className='flex flex-wrap -mx-3 mb-6'>
         <div className='w-full px-3'>
-          <label className='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2' htmlFor='grid-category'>
+          <label className={`${isDark ? 'text-white' : ''} block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2`} htmlFor='grid-category'>
             Categories
           </label>
           <div className='flex items-center space-x-2'>

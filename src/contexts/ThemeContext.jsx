@@ -18,7 +18,9 @@ let ThemeContextProvider = ({ children }) => {
     dispatch({ type: 'CHANGE_THEME', payload: theme });
   };
 
-  return <ThemeContext.Provider value={{ ...state, changeTheme }}>{children}</ThemeContext.Provider>;
+  const isDark = state.theme === 'dark';
+
+  return <ThemeContext.Provider value={{ ...state, changeTheme, isDark }}>{children}</ThemeContext.Provider>;
 };
 
 export { ThemeContext, ThemeContextProvider };

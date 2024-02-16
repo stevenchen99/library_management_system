@@ -3,12 +3,15 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { SwitchTransition, CSSTransition } from 'react-transition-group';
 import Navbar from '@/components/Navbar';
 import './styles.css';
+import useTheme from '../../hooks/useTheme';
 
 export default function Layout() {
   const location = useLocation();
 
+  let { isDark } = useTheme();
+
   return (
-    <div>
+    <div className={`${isDark ? 'bg-dbg' : ''}`}>
       <Navbar />
       <SwitchTransition>
         <CSSTransition timeout={200} classNames='fade' key={location.pathname}>
