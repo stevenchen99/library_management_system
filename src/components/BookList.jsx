@@ -1,17 +1,34 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import book from '@/assets/book.jpg';
-import useFetch from '@/hooks/useFetch';
 import { Link, useLocation } from 'react-router-dom';
 import useTheme from '../hooks/useTheme';
+import { db } from '@/firebase/firebaseConfig.js';
+import { collection, getDocs } from 'firebase/firestore';
 
 export default function BookList() {
   let location = useLocation();
   let params = new URLSearchParams(location.search);
   let search = params.get('search');
 
-  let { data: books, loading, error } = useFetch(`http://localhost:3001/books${search ? `?q=${search}` : ''}`);
+  let [books, setBooks] = useState([]);
+  let [loading, setLoading] = useState(false);
+  let [error, setError] = useState('');
+
+  // let { data: books, loading, error } = useFetch(`http://localhost:3001/books${search ? `?q=${search}` : ''}`);
 
   let { isDark } = useTheme();
+
+  useEffect(() => {
+    let ref = collection(db, 'books');
+    getDocs(ref).then((docs) => {
+      let books = [];
+      docs.forEach((doc) => {
+        let book = { id: doc.id, ...doc.data() };
+        books.push(book);
+      });
+      setBooks(books);
+    });
+  }, []);
 
   if (error) {
     return <p>{error}</p>;
