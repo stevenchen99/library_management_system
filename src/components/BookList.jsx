@@ -3,12 +3,12 @@ import book from '@/assets/book.jpg';
 import { Link, useLocation } from 'react-router-dom';
 import useTheme from '../hooks/useTheme';
 import { db } from '@/firebase/firebaseConfig.js';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 
 export default function BookList() {
-  let location = useLocation();
-  let params = new URLSearchParams(location.search);
-  let search = params.get('search');
+  // let location = useLocation();
+  // let params = new URLSearchParams(location.search);
+  // let search = params.get('search');
 
   let [books, setBooks] = useState([]);
   let [loading, setLoading] = useState(false);
@@ -21,7 +21,8 @@ export default function BookList() {
   useEffect(() => {
     setLoading(true);
     let ref = collection(db, 'books');
-    getDocs(ref).then((docs) => {
+    let q = query(ref, orderBy('datetime', 'desc'));
+    getDocs(q).then((docs) => {
       if (docs.empty) {
         setError('No Documents Found');
         setLoading(false);

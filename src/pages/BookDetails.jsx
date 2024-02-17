@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import useFetch from '@/hooks/useFetch';
 import { useNavigate, useParams } from 'react-router-dom';
 import bookImage from '@/assets/book.jpg';
 import useTheme from '../hooks/useTheme';
@@ -8,8 +7,6 @@ import { db } from '@/firebase/firebaseConfig';
 
 export default function BookDetails() {
   let { id } = useParams();
-  // let url = `http://localhost:3001/books/${id}`;
-  // let { data: book, loading, error } = useFetch(url);
 
   let [book, setBook] = useState(null);
   let [loading, setLoading] = useState(false);

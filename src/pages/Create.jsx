@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import useFetch from '@/hooks/useFetch';
 import { useNavigate } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 import useTheme from '../hooks/useTheme';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { db } from '@/firebase/firebaseConfig';
 
 export default function Create() {
   let [title, setTitle] = useState('');
@@ -11,23 +12,24 @@ export default function Create() {
   let [categories, setCategories] = useState([]);
   let [showCreating, setShowCreating] = useState(false);
   let [showCreated, setShowCreated] = useState(false);
-
-  let { setPostData, data: book, loading } = useFetch('http://localhost:3001/books', 'POST');
+  let [isCreate, setIsCreate] = useState(false);
+  let [loading, setLoading] = useState(false);
+  let [error, setError] = useState('');
 
   let navigate = useNavigate();
 
   useEffect(() => {
-    if (book) {
+    if (isCreate) {
       const timeoutId = setTimeout(() => {
         navigate('/');
       }, 5000);
 
       return () => clearTimeout(timeoutId);
     }
-  }, [book, navigate]);
+  }, [isCreate, navigate]);
 
   useEffect(() => {
-    if (loading && !book) {
+    if (loading && !isCreate) {
       setShowCreating(true);
 
       // Simulate asynchronous operation (e.g., API request)
@@ -35,12 +37,12 @@ export default function Create() {
         setShowCreating(false);
       }, 2000);
     }
-    if (!loading && book) {
+    if (!loading && isCreate) {
       setTimeout(() => {
         setShowCreated(true);
-      }, 2250);
+      }, 2000);
     }
-  }, [loading, book, showCreating, showCreated]);
+  }, [loading, isCreate, showCreating, showCreated]);
 
   let addBookCategory = (e) => {
     if (newCategory && categories.includes(newCategory)) {
@@ -57,11 +59,27 @@ export default function Create() {
       title,
       description,
       categories,
+      datetime: serverTimestamp(),
     };
-    setPostData(data);
+    setLoading(true);
+    // Firebase store
+    let ref = collection(db, 'books');
+    addDoc(ref, data)
+      .then(() => {
+        setIsCreate(true);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('Failed to Create Book');
+        setLoading(false);
+      });
   };
 
   let { isDark } = useTheme();
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
     <div className='w-full max-w-lg mx-auto mt-5 h-screen'>
@@ -130,17 +148,14 @@ export default function Create() {
             ))}
           </div>
           <button onClick={addBook} className='text-white bg-primary px-3 py-2 rounded-2xl flex items-center justify-center gap-1 w-full'>
-            {!loading && !book && (
+            {!loading && !isCreate && (
               <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth={1.5} stroke='currentColor' className='w-6 h-6'>
                 <path strokeLinecap='round' strokeLinejoin='round' d='M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z' />
               </svg>
             )}
-            {/* {!loading && !book && <span className='hidden md:block'>Create Book</span>}
-            {loading && !book && <span className='hidden md:block'>Creating...</span>}
-            {!loading && !!book && <span className='hidden md:block'>Book Created!</span>} */}
             <>
-              {!loading && !book && <span className='hidden md:block'>Create Book</span>}
-              <CSSTransition in={showCreating} timeout={300} classNames='fade' unmountOnExit>
+              {!loading && !isCreate && <span className='hidden md:block'>Create Book</span>}
+              <CSSTransition in={showCreating} timeout={200} classNames='fade' unmountOnExit>
                 <span className='hidden md:block'>Creating...</span>
               </CSSTransition>
               <CSSTransition in={showCreated} timeout={300} classNames='fade' unmountOnExit>
