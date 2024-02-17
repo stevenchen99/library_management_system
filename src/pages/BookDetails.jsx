@@ -1,13 +1,35 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import useFetch from '@/hooks/useFetch';
 import { useNavigate, useParams } from 'react-router-dom';
 import bookImage from '@/assets/book.jpg';
 import useTheme from '../hooks/useTheme';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/firebase/firebaseConfig';
 
 export default function BookDetails() {
   let { id } = useParams();
-  let url = `http://localhost:3001/books/${id}`;
-  let { data: book, loading, error } = useFetch(url);
+  // let url = `http://localhost:3001/books/${id}`;
+  // let { data: book, loading, error } = useFetch(url);
+
+  let [book, setBook] = useState(null);
+  let [loading, setLoading] = useState(false);
+  let [error, setError] = useState('');
+
+  useEffect(() => {
+    setLoading(true);
+    let ref = doc(db, 'books', id);
+    getDoc(ref).then((doc) => {
+      if (doc.exists()) {
+        let book = { id: doc.id, ...doc.data() };
+        setBook(book);
+        setLoading(false);
+        setError('');
+      } else {
+        setError('No Document Found');
+        setLoading(false);
+      }
+    });
+  }, [id]);
 
   let navigate = useNavigate();
 
