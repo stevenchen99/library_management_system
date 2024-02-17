@@ -19,14 +19,21 @@ export default function BookList() {
   let { isDark } = useTheme();
 
   useEffect(() => {
+    setLoading(true);
     let ref = collection(db, 'books');
     getDocs(ref).then((docs) => {
+      if (docs.empty) {
+        setError('No Documents Found');
+        setLoading(false);
+      }
       let books = [];
       docs.forEach((doc) => {
         let book = { id: doc.id, ...doc.data() };
         books.push(book);
       });
       setBooks(books);
+      setLoading(false);
+      setError('');
     });
   }, []);
 
