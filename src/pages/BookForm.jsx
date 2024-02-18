@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 import useTheme from '../hooks/useTheme';
-import { addDoc, collection, doc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebase/firebaseConfig';
 
 export default function Create() {
@@ -11,9 +11,9 @@ export default function Create() {
   let [description, setDescription] = useState('');
   let [newCategory, setNewCategory] = useState('');
   let [categories, setCategories] = useState([]);
-  let [showCreating, setShowCreating] = useState(false);
-  let [showCreated, setShowCreated] = useState(false);
-  let [isCreated, setIsCreated] = useState(false);
+  let [showProgress, setshowProgress] = useState(false);
+  let [showFinished, setshowFinished] = useState(false);
+  let [isFinished, setisFinished] = useState(false);
   let [loading, setLoading] = useState(false);
   let [error, setError] = useState('');
   let [isEdit, setIsEdit] = useState(false);
@@ -48,30 +48,30 @@ export default function Create() {
   let navigate = useNavigate();
 
   useEffect(() => {
-    if (isCreated) {
+    if (isFinished) {
       const timeoutId = setTimeout(() => {
         navigate('/');
       }, 5000);
 
       return () => clearTimeout(timeoutId);
     }
-  }, [isCreated, navigate]);
+  }, [isFinished, navigate]);
 
   useEffect(() => {
-    if (loading && !isCreated) {
-      setShowCreating(true);
+    if (loading && !isFinished) {
+      setshowProgress(true);
 
       // Simulate asynchronous operation (e.g., API request)
       setTimeout(() => {
-        setShowCreating(false);
-      }, 2000);
+        setshowProgress(false);
+      }, 1900);
     }
-    if (!loading && isCreated) {
+    if (!loading && isFinished) {
       setTimeout(() => {
-        setShowCreated(true);
+        setshowFinished(true);
       }, 2000);
     }
-  }, [loading, isCreated, showCreating, showCreated]);
+  }, [loading, isFinished, showProgress, showFinished]);
 
   /*** Add Book Category ***/
 
@@ -84,9 +84,9 @@ export default function Create() {
     setNewCategory('');
   };
 
-  /*** Add Book ***/
+  /*** Submit Form ***/
 
-  let addBook = (e) => {
+  let submitForm = (e) => {
     e.preventDefault();
     let data = {
       title,
@@ -95,17 +95,32 @@ export default function Create() {
       datetime: serverTimestamp(),
     };
     setLoading(true);
-    // Firebase store
-    let ref = collection(db, 'books');
-    addDoc(ref, data)
-      .then(() => {
-        setIsCreated(true);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError('Failed to Create Book');
-        setLoading(false);
-      });
+    // Update
+    if (isEdit) {
+      let ref = doc(db, 'books', id);
+      updateDoc(ref, data)
+        .then(() => {
+          setisFinished(true);
+          setLoading(false);
+        })
+        .catch(() => {
+          setError('Failed to Update Book');
+          setLoading(false);
+        });
+    }
+    // Create
+    else {
+      let ref = collection(db, 'books');
+      addDoc(ref, data)
+        .then(() => {
+          setisFinished(true);
+          setLoading(false);
+        })
+        .catch(() => {
+          setError('Failed to Create Book');
+          setLoading(false);
+        });
+    }
   };
 
   let { isDark } = useTheme();
@@ -180,19 +195,34 @@ export default function Create() {
               </span>
             ))}
           </div>
-          <button onClick={addBook} className='text-white bg-primary px-3 py-2 rounded-2xl flex items-center justify-center gap-1 w-full'>
-            {!loading && !isCreated && !isEdit && (
-              <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth={1.5} stroke='currentColor' className='w-6 h-6'>
-                <path strokeLinecap='round' strokeLinejoin='round' d='M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z' />
-              </svg>
+          <button onClick={submitForm} className='text-white bg-primary px-3 py-2 rounded-2xl flex items-center justify-center gap-1 w-full'>
+            {!loading && !isFinished && (
+              <div className='flex'>
+                {!isEdit && (
+                  <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth={1.5} stroke='currentColor' className='w-6 h-6'>
+                    <path strokeLinecap='round' strokeLinejoin='round' d='M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z' />
+                  </svg>
+                )}
+                {isEdit && (
+                  <svg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='currentColor'>
+                    <path d='M480-120q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-480q0-75 28.5-140.5t77-114q48.5-48.5 114-77T480-840q82 0 155.5 35T760-706v-94h80v240H600v-80h110q-41-56-101-88t-129-32q-117 0-198.5 81.5T200-480q0 117 81.5 198.5T480-200q105 0 183.5-68T756-440h82q-15 137-117.5 228.5T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z' />
+                  </svg>
+                )}
+              </div>
             )}
             <>
-              {!loading && !isCreated && <span className='hidden md:block'>{isEdit ? 'Update' : 'Create'} Book</span>}
-              <CSSTransition in={showCreating} timeout={200} classNames='fade' unmountOnExit>
-                <span className='hidden md:block'>Creating...</span>
+              {!loading && !isFinished && <span className='hidden md:block'>{isEdit ? 'Update' : 'Create'} Book</span>}
+              <CSSTransition in={showProgress} timeout={300} classNames='fade' unmountOnExit>
+                <div>
+                  {!isEdit && <span className='hidden md:block'>Creating...</span>}
+                  {isEdit && <span className='hidden md:block'>Updating...</span>}
+                </div>
               </CSSTransition>
-              <CSSTransition in={showCreated} timeout={300} classNames='fade' unmountOnExit>
-                <span className='hidden md:block'>Book Created!</span>
+              <CSSTransition in={showFinished} timeout={300} classNames='fade' unmountOnExit>
+                <div>
+                  {!isEdit && <span className='hidden md:block'>Book Created!</span>}
+                  {isEdit && <span className='hidden md:block'>Book Updated!</span>}
+                </div>
               </CSSTransition>
             </>
           </button>
