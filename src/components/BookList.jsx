@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import book from '@/assets/book.jpg';
+import trash from '@/assets/trash.svg';
 import { Link, useLocation } from 'react-router-dom';
 import useTheme from '../hooks/useTheme';
 import { db } from '@/firebase/firebaseConfig.js';
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, orderBy, query } from 'firebase/firestore';
 
 export default function BookList() {
   // let location = useLocation();
@@ -17,6 +18,14 @@ export default function BookList() {
   // let { data: books, loading, error } = useFetch(`http://localhost:3001/books${search ? `?q=${search}` : ''}`);
 
   let { isDark } = useTheme();
+
+  let deleteBook = async (e, id) => {
+    e.preventDefault();
+
+    let ref = doc(db, 'books', id);
+    await deleteDoc(ref);
+    setBooks((prev) => prev.filter((b) => b.id != id));
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -53,12 +62,17 @@ export default function BookList() {
                 <div className='text-center space-y-2 mt-3'>
                   <h1>{b.title}</h1>
                   <p>{b.description}</p>
-                  <div className='flex flex-wrap'>
-                    {b.categories.map((c) => (
-                      <span className='mx-1 my-1 text-white rounded-full px-2 py-1 text-sm bg-blue-500' key={c}>
-                        {c}
-                      </span>
-                    ))}
+                  <div className='flex flex-wrap justify-between items-center'>
+                    <div>
+                      {b.categories.map((c) => (
+                        <span className='mx-1 my-1 text-white rounded-full px-2 py-1 text-sm bg-blue-500' key={c}>
+                          {c}
+                        </span>
+                      ))}
+                    </div>
+                    <div onClick={(e) => deleteBook(e, b.id)}>
+                      <img src={trash} alt='' />
+                    </div>
                   </div>
                 </div>
               </div>
