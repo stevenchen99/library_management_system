@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import bookImage from '@/assets/book.jpg';
 import useTheme from '../hooks/useTheme';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/firebase/firebaseConfig';
 
 export default function BookDetails() {
@@ -15,7 +15,7 @@ export default function BookDetails() {
   useEffect(() => {
     setLoading(true);
     let ref = doc(db, 'books', id);
-    getDoc(ref).then((doc) => {
+    onSnapshot(ref, (doc) => {
       if (doc.exists()) {
         let book = { id: doc.id, ...doc.data() };
         setBook(book);

@@ -5,7 +5,7 @@ import pencil from '@/assets/pencil.svg';
 import { Link } from 'react-router-dom';
 import useTheme from '../hooks/useTheme';
 import { db } from '@/firebase/firebaseConfig.js';
-import { collection, deleteDoc, doc, getDocs, orderBy, query } from 'firebase/firestore';
+import { collection, deleteDoc, doc, onSnapshot, orderBy, query } from 'firebase/firestore';
 
 export default function BookList() {
   // let location = useLocation();
@@ -25,14 +25,14 @@ export default function BookList() {
 
     let ref = doc(db, 'books', id);
     await deleteDoc(ref);
-    setBooks((prev) => prev.filter((b) => b.id != id));
+    // setBooks((prev) => prev.filter((b) => b.id != id));
   };
 
   useEffect(() => {
     setLoading(true);
     let ref = collection(db, 'books');
     let q = query(ref, orderBy('datetime', 'desc'));
-    getDocs(q).then((docs) => {
+    onSnapshot(q, (docs) => {
       if (docs.empty) {
         setError('No Documents Found');
         setLoading(false);
