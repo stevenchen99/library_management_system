@@ -1,35 +1,64 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 import useTheme from '../hooks/useTheme';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/firebase/firebaseConfig';
 
 export default function Create() {
+  let { id } = useParams();
   let [title, setTitle] = useState('');
   let [description, setDescription] = useState('');
   let [newCategory, setNewCategory] = useState('');
   let [categories, setCategories] = useState([]);
   let [showCreating, setShowCreating] = useState(false);
   let [showCreated, setShowCreated] = useState(false);
-  let [isCreate, setIsCreate] = useState(false);
+  let [isCreated, setIsCreated] = useState(false);
   let [loading, setLoading] = useState(false);
   let [error, setError] = useState('');
+  let [isEdit, setIsEdit] = useState(false);
+
+  /*** Create or Edit ***/
+
+  useEffect(() => {
+    // Edit
+    if (id) {
+      setIsEdit(true);
+      let ref = doc(db, 'books', id);
+      getDoc(ref).then((doc) => {
+        if (doc.exists()) {
+          let { title, description, categories } = doc.data();
+          setTitle(title);
+          setDescription(description);
+          setCategories(categories);
+        }
+      });
+    }
+    // Create
+    else {
+      setIsEdit(false);
+      setTitle('');
+      setDescription('');
+      setCategories([]);
+    }
+  }, []);
+
+  /*** Create button text change control & Navigation ***/
 
   let navigate = useNavigate();
 
   useEffect(() => {
-    if (isCreate) {
+    if (isCreated) {
       const timeoutId = setTimeout(() => {
         navigate('/');
       }, 5000);
 
       return () => clearTimeout(timeoutId);
     }
-  }, [isCreate, navigate]);
+  }, [isCreated, navigate]);
 
   useEffect(() => {
-    if (loading && !isCreate) {
+    if (loading && !isCreated) {
       setShowCreating(true);
 
       // Simulate asynchronous operation (e.g., API request)
@@ -37,12 +66,14 @@ export default function Create() {
         setShowCreating(false);
       }, 2000);
     }
-    if (!loading && isCreate) {
+    if (!loading && isCreated) {
       setTimeout(() => {
         setShowCreated(true);
       }, 2000);
     }
-  }, [loading, isCreate, showCreating, showCreated]);
+  }, [loading, isCreated, showCreating, showCreated]);
+
+  /*** Add Book Category ***/
 
   let addBookCategory = (e) => {
     if (newCategory && categories.includes(newCategory)) {
@@ -52,6 +83,8 @@ export default function Create() {
     setCategories((prev) => [newCategory, ...prev]);
     setNewCategory('');
   };
+
+  /*** Add Book ***/
 
   let addBook = (e) => {
     e.preventDefault();
@@ -66,7 +99,7 @@ export default function Create() {
     let ref = collection(db, 'books');
     addDoc(ref, data)
       .then(() => {
-        setIsCreate(true);
+        setIsCreated(true);
         setLoading(false);
       })
       .catch(() => {
@@ -148,13 +181,13 @@ export default function Create() {
             ))}
           </div>
           <button onClick={addBook} className='text-white bg-primary px-3 py-2 rounded-2xl flex items-center justify-center gap-1 w-full'>
-            {!loading && !isCreate && (
+            {!loading && !isCreated && !isEdit && (
               <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth={1.5} stroke='currentColor' className='w-6 h-6'>
                 <path strokeLinecap='round' strokeLinejoin='round' d='M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z' />
               </svg>
             )}
             <>
-              {!loading && !isCreate && <span className='hidden md:block'>Create Book</span>}
+              {!loading && !isCreated && <span className='hidden md:block'>{isEdit ? 'Update' : 'Create'} Book</span>}
               <CSSTransition in={showCreating} timeout={200} classNames='fade' unmountOnExit>
                 <span className='hidden md:block'>Creating...</span>
               </CSSTransition>
