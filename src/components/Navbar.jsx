@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import useTheme from '../hooks/useTheme';
 import lightIcon from '@/assets/light.svg';
 import darkIcon from '@/assets/dark.svg';
+import useSignout from '../hooks/useSignout';
 
 export default function Navbar() {
   let [search, setSearch] = useState('');
@@ -14,6 +15,16 @@ export default function Navbar() {
   };
 
   let { isDark, changeTheme } = useTheme();
+
+  let { logout } = useSignout();
+  let signOutUser = async () => {
+    await logout();
+    const timeoutId = setTimeout(() => {
+      navigate('/login');
+    }, 3000);
+
+    return () => clearTimeout(timeoutId);
+  };
 
   return (
     <nav className={`border border-b-1`}>
@@ -73,6 +84,16 @@ export default function Navbar() {
           <div className='cursor-pointer'>
             {isDark && <img src={lightIcon} alt='' className='w-8' onClick={() => changeTheme('light')} />}
             {!isDark && <img src={darkIcon} alt='' className='w-8' onClick={() => changeTheme('dark')} />}
+          </div>
+          <div>
+            <button onClick={signOutUser} className='flex items-center bg-red-500 text-white text-sm rounded-lg px-2 py-2 space-x-1'>
+              <>
+                <svg xmlns='http://www.w3.org/2000/svg' height='20' viewBox='0 -960 960 960' width='20' fill='white'>
+                  <path d='M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z' />
+                </svg>
+                <span>Logout</span>
+              </>
+            </button>
           </div>
         </li>
       </ul>
