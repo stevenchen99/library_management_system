@@ -1,5 +1,5 @@
 import Home from '@/pages/Home';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import Layout from '@/pages/layouts/Layout';
 import BookForm from '@/pages/BookForm';
 import BookDetails from '@/pages/BookDetails';
@@ -9,21 +9,24 @@ import { useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 
 export default function index() {
+  let { authReady, user } = useContext(AuthContext);
+
+  let isAuthenticated = Boolean(user);
+
   const router = createBrowserRouter([
     {
       path: '/',
       element: <Layout />,
       children: [
-        { path: '', element: <Home /> },
-        { path: 'books/:id', element: <BookDetails /> },
-        { path: 'create', element: <BookForm /> },
-        { path: 'edit/:id', element: <BookForm /> },
-        { path: 'register', element: <Register /> },
-        { path: 'login', element: <Login /> },
+        { path: '', element: isAuthenticated ? <Home /> : <Navigate to='/login' /> },
+        { path: 'books/:id', element: isAuthenticated ? <BookDetails /> : <Navigate to='/login' /> },
+        { path: 'create', element: isAuthenticated ? <BookForm /> : <Navigate to='/login' /> },
+        { path: 'edit/:id', element: isAuthenticated ? <BookForm /> : <Navigate to='/login' /> },
+        { path: 'register', element: !isAuthenticated ? <Register /> : <Navigate to='/' /> },
+        { path: 'login', element: !isAuthenticated ? <Login /> : <Navigate to='/' /> },
       ],
     },
   ]);
 
-  let { authReady } = useContext(AuthContext);
   return authReady && <RouterProvider router={router} />;
 }
