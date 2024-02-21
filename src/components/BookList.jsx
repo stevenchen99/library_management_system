@@ -1,52 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import book from '@/assets/book.jpg';
 import trash from '@/assets/trash.svg';
 import pencil from '@/assets/pencil.svg';
 import { Link } from 'react-router-dom';
 import useTheme from '../hooks/useTheme';
-import { db } from '@/firebase/firebaseConfig.js';
-import { collection, deleteDoc, doc, onSnapshot, orderBy, query } from 'firebase/firestore';
+import useFirestore from '../hooks/useFirestore';
 
 export default function BookList() {
   // let location = useLocation();
   // let params = new URLSearchParams(location.search);
   // let search = params.get('search');
 
-  let [books, setBooks] = useState([]);
-  let [loading, setLoading] = useState(false);
-  let [error, setError] = useState('');
-
   // let { data: books, loading, error } = useFetch(`http://localhost:3001/books${search ? `?q=${search}` : ''}`);
+  let { getCollection, deleteDocument } = useFirestore();
 
   let { isDark } = useTheme();
 
   let deleteBook = async (e, id) => {
     e.preventDefault();
-
-    let ref = doc(db, 'books', id);
-    await deleteDoc(ref);
-    // setBooks((prev) => prev.filter((b) => b.id != id));
+    await deleteDocument('books', id);
   };
 
-  useEffect(() => {
-    setLoading(true);
-    let ref = collection(db, 'books');
-    let q = query(ref, orderBy('datetime', 'desc'));
-    onSnapshot(q, (docs) => {
-      if (docs.empty) {
-        setError('No Documents Found');
-        setLoading(false);
-      }
-      let books = [];
-      docs.forEach((doc) => {
-        let book = { id: doc.id, ...doc.data() };
-        books.push(book);
-      });
-      setBooks(books);
-      setLoading(false);
-      setError('');
-    });
-  }, []);
+  let { data: books, loading, error } = getCollection('books');
 
   if (error) {
     return <p>{error}</p>;

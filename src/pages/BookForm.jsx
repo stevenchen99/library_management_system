@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 import useTheme from '../hooks/useTheme';
-import { addDoc, collection, doc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase/firebaseConfig';
+import useFirestore from '../hooks/useFirestore';
 
-export default function Create() {
+export default function BookForm() {
   let { id } = useParams();
   let [title, setTitle] = useState('');
   let [description, setDescription] = useState('');
@@ -13,13 +14,14 @@ export default function Create() {
   let [categories, setCategories] = useState([]);
   let [showProgress, setshowProgress] = useState(false);
   let [showFinished, setshowFinished] = useState(false);
+  let [isEdit, setIsEdit] = useState(false);
   let [isFinished, setisFinished] = useState(false);
   let [loading, setLoading] = useState(false);
   let [error, setError] = useState('');
-  let [isEdit, setIsEdit] = useState(false);
+
+  let { addDocument, updateDocument } = useFirestore();
 
   /*** Create or Edit ***/
-
   useEffect(() => {
     // Edit
     if (id) {
@@ -44,7 +46,6 @@ export default function Create() {
   }, []);
 
   /*** Create button text change control & Navigation ***/
-
   let navigate = useNavigate();
 
   useEffect(() => {
@@ -74,7 +75,6 @@ export default function Create() {
   }, [loading, isFinished, showProgress, showFinished]);
 
   /*** Add Book Category ***/
-
   let addBookCategory = (e) => {
     if (newCategory && categories.includes(newCategory)) {
       setNewCategory('');
@@ -85,41 +85,35 @@ export default function Create() {
   };
 
   /*** Submit Form ***/
-
-  let submitForm = (e) => {
+  let submitForm = async (e) => {
     e.preventDefault();
     let data = {
       title,
       description,
       categories,
-      datetime: serverTimestamp(),
     };
     setLoading(true);
     // Update
     if (isEdit) {
-      let ref = doc(db, 'books', id);
-      updateDoc(ref, data)
-        .then(() => {
-          setisFinished(true);
-          setLoading(false);
-        })
-        .catch(() => {
-          setError('Failed to Update Book');
-          setLoading(false);
-        });
+      try {
+        await updateDocument('books', id, data);
+        setisFinished(true);
+        setLoading(false);
+      } catch (error) {
+        setError('Failed to Update Book');
+        setLoading(false);
+      }
     }
     // Create
     else {
-      let ref = collection(db, 'books');
-      addDoc(ref, data)
-        .then(() => {
-          setisFinished(true);
-          setLoading(false);
-        })
-        .catch(() => {
-          setError('Failed to Create Book');
-          setLoading(false);
-        });
+      try {
+        await addDocument('books', data);
+        setisFinished(true);
+        setLoading(false);
+      } catch (error) {
+        setError('Failed to Create Book');
+        setLoading(false);
+      }
     }
   };
 
@@ -215,7 +209,7 @@ export default function Create() {
               <CSSTransition in={showProgress} timeout={300} classNames='fade' unmountOnExit>
                 <div className='flex items-center'>
                   {!isEdit && (
-                    <div>
+                    <div className='flex items-center'>
                       <svg className='animate-spin -ml-1 mr-3 h-5 w-5 text-white' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24'>
                         <circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4'></circle>
                         <path
