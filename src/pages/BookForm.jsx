@@ -213,15 +213,53 @@ export default function Create() {
             <>
               {!loading && !isFinished && <span className='hidden md:block'>{isEdit ? 'Update' : 'Create'} Book</span>}
               <CSSTransition in={showProgress} timeout={300} classNames='fade' unmountOnExit>
-                <div>
-                  {!isEdit && <span className='hidden md:block'>Creating...</span>}
-                  {isEdit && <span className='hidden md:block'>Updating...</span>}
+                <div className='flex items-center'>
+                  {!isEdit && (
+                    <div>
+                      <svg className='animate-spin -ml-1 mr-3 h-5 w-5 text-white' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24'>
+                        <circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4'></circle>
+                        <path
+                          className='opacity-75'
+                          fill='currentColor'
+                          d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                        ></path>
+                      </svg>
+                      <span className='hidden md:block'>Creating...</span>
+                    </div>
+                  )}
+                  {isEdit && (
+                    <div className='flex items-center'>
+                      <svg className='animate-spin -ml-1 mr-3 h-5 w-5 text-white' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24'>
+                        <circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4'></circle>
+                        <path
+                          className='opacity-75'
+                          fill='currentColor'
+                          d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                        ></path>
+                      </svg>
+                      <span className='hidden md:block'>Updating...</span>
+                    </div>
+                  )}
                 </div>
               </CSSTransition>
               <CSSTransition in={showFinished} timeout={300} classNames='fade' unmountOnExit>
                 <div>
-                  {!isEdit && <span className='hidden md:block'>Book Created!</span>}
-                  {isEdit && <span className='hidden md:block'>Book Updated!</span>}
+                  {!isEdit && (
+                    <div className='flex items-center space-x-2'>
+                      <svg xmlns='http://www.w3.org/2000/svg' height='20' viewBox='0 -960 960 960' width='20' fill='white'>
+                        <path d='M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-18-2-36t-6-35l65-65q11 32 17 66t6 70q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-56-216L254-466l56-56 114 114 400-401 56 56-456 457Z' />
+                      </svg>
+                      <span className='hidden md:block'>Book Created!</span>
+                    </div>
+                  )}
+                  {isEdit && (
+                    <div className='flex items-center space-x-2'>
+                      <svg xmlns='http://www.w3.org/2000/svg' height='20' viewBox='0 -960 960 960' width='20' fill='white'>
+                        <path d='M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-18-2-36t-6-35l65-65q11 32 17 66t6 70q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-56-216L254-466l56-56 114 114 400-401 56 56-456 457Z' />
+                      </svg>
+                      <span className='hidden md:block'>Book Updated!</span>
+                    </div>
+                  )}
                 </div>
               </CSSTransition>
             </>

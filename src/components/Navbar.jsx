@@ -56,7 +56,7 @@ export default function Navbar() {
           onClick={(e) => {
             setSearch('');
           }}
-          className='flex items-center gap-3 md:-ml-22 cursor-pointer'
+          className='flex items-center gap-3 md:-ml-26 cursor-pointer'
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'
@@ -75,8 +75,8 @@ export default function Navbar() {
           <span className='text-2xl font-bold text-primary hidden md:block'>Book Store</span>
         </Link>
         <li className='flex items-center gap-3'>
-          <Link to='/create' className='text-white bg-primary px-3 py-2 rounded-2xl flex items-center gap-1'>
-            <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth={1.5} stroke='currentColor' className='w-6 h-6'>
+          <Link to='/create' className='text-white text-sm bg-primary px-3 py-2 rounded-2xl flex items-center gap-1'>
+            <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' strokeWidth={1.5} stroke='currentColor' className='w-5 h-5'>
               <path strokeLinecap='round' strokeLinejoin='round' d='M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z' />
             </svg>
             <span className='hidden md:block'>Create Book</span>
