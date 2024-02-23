@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { redirect, useNavigate, useParams } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 import useTheme from '../hooks/useTheme';
 import { doc, getDoc } from 'firebase/firestore';
@@ -19,6 +19,10 @@ export default function BookForm() {
   let [isFinished, setisFinished] = useState(false);
   let [loading, setLoading] = useState(false);
   let [error, setError] = useState('');
+  let [file, setFile] = useState(null);
+  let [imagePreview, setImagePreview] = useState('');
+
+  let { user } = useContext(AuthContext);
 
   let { addDocument, updateDocument } = useFirestore();
 
@@ -85,7 +89,24 @@ export default function BookForm() {
     setNewCategory('');
   };
 
-  let { user } = useContext(AuthContext);
+  /*** Image Preview ***/
+  let handleImageChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+  let handlePreviewImage = (file) => {
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onload = () => {
+      setImagePreview(reader.result);
+    };
+  };
+
+  useEffect(() => {
+    if (file) {
+      handlePreviewImage(file);
+    }
+  }, [file]);
 
   /*** Submit Form ***/
   let submitForm = async (e) => {
@@ -192,6 +213,13 @@ export default function BookForm() {
                 {c}
               </span>
             ))}
+          </div>
+          <div className='w-full px-3 my-3'>
+            <label className={`${isDark ? 'text-white' : ''} block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2`} htmlFor='grid-title'>
+              Book Cover
+            </label>
+            <input type='file' onChange={handleImageChange} />
+            {!!imagePreview && <img src={imagePreview} alt='' className='my-3 mx-auto' width={300} height={300} />}
           </div>
           <button onClick={submitForm} className='text-white bg-primary px-3 py-2 rounded-2xl flex items-center justify-center gap-1 w-full'>
             {!loading && !isFinished && (
