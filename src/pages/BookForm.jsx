@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 import useTheme from '../hooks/useTheme';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase/firebaseConfig';
 import useFirestore from '../hooks/useFirestore';
+import { AuthContext } from '../contexts/AuthContext';
 
 export default function BookForm() {
   let { id } = useParams();
@@ -84,6 +85,8 @@ export default function BookForm() {
     setNewCategory('');
   };
 
+  let { user } = useContext(AuthContext);
+
   /*** Submit Form ***/
   let submitForm = async (e) => {
     e.preventDefault();
@@ -91,6 +94,7 @@ export default function BookForm() {
       title,
       description,
       categories,
+      uid: user.uid,
     };
     setLoading(true);
     // Update
