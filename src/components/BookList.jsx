@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import book from '@/assets/book.jpg';
 import trash from '@/assets/trash.svg';
 import pencil from '@/assets/pencil.svg';
 import { Link } from 'react-router-dom';
@@ -35,7 +34,7 @@ export default function BookList() {
           {books.map((b) => (
             <Link to={`/books/${b.id}`} key={b.id}>
               <div className={`${isDark ? 'text-white bg-dcard' : ''} border border-1 p-4 min-h-[500px] relative`}>
-                <img src={book} alt='' />
+                <img src={b.cover} alt='' />
                 <div className='text-center space-y-3 mt-3'>
                   <h1>{b.title}</h1>
                   <p>{b.description}</p>

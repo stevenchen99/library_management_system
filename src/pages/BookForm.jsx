@@ -1,11 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { redirect, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 import useTheme from '../hooks/useTheme';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase/firebaseConfig';
 import useFirestore from '../hooks/useFirestore';
 import { AuthContext } from '../contexts/AuthContext';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { storage } from '../firebase/firebaseConfig';
 
 export default function BookForm() {
   let { id } = useParams();
@@ -21,6 +23,8 @@ export default function BookForm() {
   let [error, setError] = useState('');
   let [file, setFile] = useState(null);
   let [imagePreview, setImagePreview] = useState('');
+
+  let { isDark } = useTheme();
 
   let { user } = useContext(AuthContext);
 
@@ -108,14 +112,25 @@ export default function BookForm() {
     }
   }, [file]);
 
+  /*** Upload Book Cover Image to Firebase Storage ***/
+  let uploadToFirebase = async (file) => {
+    let uniqueFileName = Date.now().toString() + '_' + file.name;
+    let path = '/covers/' + user.uid + '/' + uniqueFileName;
+    let storageRef = ref(storage, path);
+    await uploadBytes(storageRef, file);
+    return await getDownloadURL(storageRef);
+  };
+
   /*** Submit Form ***/
   let submitForm = async (e) => {
     e.preventDefault();
+    let url = await uploadToFirebase(file);
     let data = {
       title,
       description,
       categories,
       uid: user.uid,
+      cover: url,
     };
     setLoading(true);
     // Update
@@ -141,8 +156,6 @@ export default function BookForm() {
       }
     }
   };
-
-  let { isDark } = useTheme();
 
   if (error) {
     return <p>{error}</p>;
