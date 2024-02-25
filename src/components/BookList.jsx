@@ -34,7 +34,9 @@ export default function BookList() {
           {books.map((b) => (
             <Link to={`/books/${b.id}`} key={b.id}>
               <div className={`${isDark ? 'text-white bg-dcard' : ''} border border-1 p-4 min-h-[500px] relative`}>
-                <img src={b.cover} alt='' />
+                <div className='image-container h-64 flex items-center justify-center'>
+                  <img className='max-w-full max-h-full object-contain' src={b.cover} alt='' />
+                </div>
                 <div className='text-center space-y-3 mt-3'>
                   <h1>{b.title}</h1>
                   <p>{b.description}</p>

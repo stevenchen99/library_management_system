@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import bookImage from '@/assets/book.jpg';
 import useTheme from '../hooks/useTheme';
 
 import useFirestore from '../hooks/useFirestore';
@@ -34,8 +33,10 @@ export default function BookDetails() {
       )}
       {loading && <div>loading...</div>}
       {book && (
-        <div className={`${isDark ? 'text-white' : ''} grid grid-cols-2 h-screen`}>
-          <img src={bookImage} alt='' />
+        <div className={`${isDark ? 'text-white' : ''} grid grid-cols-2`}>
+          <div className='image-container h-80 flex items-center justify-center'>
+            <img className='max-w-full max-h-full object-contain' src={book.cover} alt='' />
+          </div>
           <div className='space-y-4'>
             <h1 className='text-2xl font-bold'>{book.title}</h1>
             <div className='space-x-3'>
