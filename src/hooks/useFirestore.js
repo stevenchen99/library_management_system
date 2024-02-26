@@ -68,8 +68,10 @@ export default function useFirestore() {
   };
 
   /*** Update a Document in a Collection ***/
-  let updateDocument = async (collectionName, id, data) => {
-    data.dateTime = serverTimestamp();
+  let updateDocument = async (collectionName, id, data, updateDate = true) => {
+    if (updateDate) {
+      data.dateTime = serverTimestamp();
+    }
     let ref = doc(db, collectionName, id);
     return updateDoc(ref, data);
   };

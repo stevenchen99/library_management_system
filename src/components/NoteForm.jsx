@@ -5,14 +5,20 @@ import useFirestore from '../hooks/useFirestore';
 export default function NoteForm({ type = 'create', setEditNote, editNote }) {
   let { id } = useParams();
   let [note, setNote] = useState('');
-  let { addDocument } = useFirestore();
-  let addNote = async () => {
-    let data = {
-      note,
-      bookUid: id,
-    };
-    await addDocument('notes', data);
-    setNote('');
+  let { addDocument, updateDocument } = useFirestore();
+  let submitNote = async () => {
+    if (type === 'create') {
+      let data = {
+        note,
+        bookUid: id,
+      };
+      await addDocument('notes', data);
+      setNote('');
+    } else {
+      editNote.note = note;
+      await updateDocument('notes', editNote.id, editNote, false);
+      setEditNote(null);
+    }
   };
 
   useEffect(() => {
@@ -33,7 +39,7 @@ export default function NoteForm({ type = 'create', setEditNote, editNote }) {
         placeholder='Enter Note'
       ></textarea>
       <div className='flex space-x-3'>
-        <button onClick={addNote} className='text-white text-sm bg-primary px-3 py-2 rounded-lg flex items-center gap-1 my-3 ml-3'>
+        <button onClick={submitNote} className='text-white text-sm bg-primary px-3 py-2 rounded-lg flex items-center gap-1 my-3 ml-3'>
           <span>{type === 'update' ? 'Update' : 'Add'} Note</span>
         </button>
         {type === 'update' && (
