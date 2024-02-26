@@ -15,7 +15,7 @@ export default function NoteForm() {
     setNote('');
   };
   return (
-    <div>
+    <div className='w-4/6 mx-auto'>
       <textarea
         value={note}
         onChange={(e) => setNote(e.target.value)}
@@ -24,6 +24,7 @@ export default function NoteForm() {
         id=''
         cols='30'
         rows='5'
+        placeholder='Enter Note'
       ></textarea>
       <button onClick={addNote} className='text-white text-sm bg-primary px-3 py-2 rounded-lg flex items-center gap-1 my-3 ml-3'>
         <span>Add Note</span>

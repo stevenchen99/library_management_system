@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useTheme from '../hooks/useTheme';
 import useFirestore from '../hooks/useFirestore';
 import NoteForm from '../components/NoteForm';
+import NoteList from '../components/NoteList';
 
 export default function BookDetails() {
   let { id } = useParams();
@@ -53,18 +54,7 @@ export default function BookDetails() {
             <h3 className='font-bold text-xl text-primary my-3 text-center'>My Notes</h3>
             <div className='w-4/6 mx-auto'></div>
             <NoteForm />
-            <div>
-              <div className='border-2 shadow-md p-3 my-3'>
-                <div className='flex space-x-3'>
-                  <img className='w-12 h-12 rounded-full' src='https://atomichub-ipfs.com/ipfs/QmS3rH1LYZJvdWWQRcdfEZpEfdDbZANhpv4qhTgoedYghu' alt='' />
-                  <div>
-                    <h3>Steven</h3>
-                    <div className='text-gray-400'>26/02/2024</div>
-                  </div>
-                </div>
-                <div>note</div>
-              </div>
-            </div>
+            <NoteList />
           </div>
         </>
       )}

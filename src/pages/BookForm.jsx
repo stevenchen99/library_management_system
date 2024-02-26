@@ -162,7 +162,7 @@ export default function BookForm() {
   }
 
   return (
-    <div className='w-full max-w-lg mx-auto mt-5 h-screen'>
+    <div className='w-full max-w-lg mx-auto mt-5'>
       <div className='flex flex-wrap -mx-3 mb-6'>
         <div className='w-full px-3'>
           <label className={`${isDark ? 'text-white' : ''} block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2`} htmlFor='grid-title'>
