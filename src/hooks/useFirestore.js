@@ -17,7 +17,7 @@ export default function useFirestore() {
       if (qRef) {
         queries.push(where(...qRef));
       }
-      queries.push(orderBy('datetime', 'desc'));
+      queries.push(orderBy('dateTime', 'desc'));
       let q = query(ref, ...queries);
       onSnapshot(q, (docs) => {
         if (docs.empty) {
@@ -62,14 +62,14 @@ export default function useFirestore() {
 
   /*** Create a Document in a Collection ***/
   let addDocument = async (collectionName, data) => {
-    data.datetime = serverTimestamp();
+    data.dateTime = serverTimestamp();
     let ref = collection(db, collectionName);
     return addDoc(ref, data);
   };
 
   /*** Update a Document in a Collection ***/
   let updateDocument = async (collectionName, id, data) => {
-    data.datetime = serverTimestamp();
+    data.dateTime = serverTimestamp();
     let ref = doc(db, collectionName, id);
     return updateDoc(ref, data);
   };

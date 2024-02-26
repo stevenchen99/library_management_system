@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import useTheme from '../hooks/useTheme';
-
 import useFirestore from '../hooks/useFirestore';
+import NoteForm from '../components/NoteForm';
 
 export default function BookDetails() {
   let { id } = useParams();
   let { getDocument } = useFirestore();
   let { data: book, loading, error } = getDocument('books', id);
 
+  let { isDark } = useTheme();
   let navigate = useNavigate();
 
   useEffect(() => {
@@ -20,8 +21,6 @@ export default function BookDetails() {
       return () => clearTimeout(timeoutId);
     }
   }, [error, navigate]);
-
-  let { isDark } = useTheme();
 
   return (
     <>
@@ -52,21 +51,18 @@ export default function BookDetails() {
           </div>
           <div>
             <h3 className='font-bold text-xl text-primary my-3 text-center'>My Notes</h3>
-            <textarea className='p-3 shadow-md border-2 bg-gray-50 w-full' name='' id='' cols='30' rows='5'></textarea>
-            <button className='text-white text-sm bg-primary px-3 py-2 rounded-lg flex items-center gap-1 my-3'>
-              <span className='hidden md:block'>Add Note</span>
-            </button>
-            <div className='border-2 shadow-md p-3 my-3'>
-              <div className='flex space-x-3'>
-                <img className='w-12 h-12 rounded-full' src='https://atomichub-ipfs.com/ipfs/QmS3rH1LYZJvdWWQRcdfEZpEfdDbZANhpv4qhTgoedYghu' alt='' />
-                <div>
-                  <h3>Steven</h3>
-                  <div className='text-gray-400'>25.02.2024</div>
+            <div className='w-4/6 mx-auto'></div>
+            <NoteForm />
+            <div>
+              <div className='border-2 shadow-md p-3 my-3'>
+                <div className='flex space-x-3'>
+                  <img className='w-12 h-12 rounded-full' src='https://atomichub-ipfs.com/ipfs/QmS3rH1LYZJvdWWQRcdfEZpEfdDbZANhpv4qhTgoedYghu' alt='' />
+                  <div>
+                    <h3>Steven</h3>
+                    <div className='text-gray-400'>26/02/2024</div>
+                  </div>
                 </div>
-              </div>
-              <div>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt vitae cum reiciendis sequi architecto nostrum tenetur, doloribus libero
-                voluptates magni natus sint, officiis nam. Consequatur asperiores excepturi deleniti vero reprehenderit?
+                <div>note</div>
               </div>
             </div>
           </div>
