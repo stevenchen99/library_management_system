@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import trash from '@/assets/trash.svg';
 import pencil from '@/assets/pencil.svg';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import useTheme from '../hooks/useTheme';
 import useFirestore from '../hooks/useFirestore';
 import { AuthContext } from '../contexts/AuthContext';
@@ -13,6 +13,8 @@ export default function BookList() {
 
   // let { data: books, loading, error } = useFetch(`http://localhost:3001/books${search ? `?q=${search}` : ''}`);
   let { getCollection, deleteDocument } = useFirestore();
+
+  let navigate = useNavigate();
 
   let { isDark } = useTheme();
 
@@ -50,9 +52,15 @@ export default function BookList() {
                     </div>
                   </div>
                   <div className='flex absolute bottom-3 right-3 items-center justify-end gap-3'>
-                    <Link to={`/edit/${b.id}`}>
-                      <img src={pencil} alt='' />
-                    </Link>
+                    <img
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate(`/edit/${b.id}`);
+                      }}
+                      src={pencil}
+                      alt=''
+                    />
+
                     <img src={trash} alt='' onClick={(e) => deleteBook(e, b.id)} />
                   </div>
                 </div>
