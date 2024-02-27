@@ -7,6 +7,8 @@ import useTheme from '../../hooks/useTheme';
 
 export default function Layout() {
   const location = useLocation();
+  let params = new URLSearchParams(location.search);
+  let searchValue = params.get('search');
 
   let { isDark } = useTheme();
 
@@ -21,7 +23,7 @@ export default function Layout() {
 
   return (
     <div className={`${isDark ? 'bg-dbg' : ''}`}>
-      <Navbar />
+      <Navbar searchValue={searchValue} />
       <SwitchTransition>
         <CSSTransition timeout={200} classNames='fade' key={location.pathname}>
           <div className='max-w-6xl mx-auto p-3'>

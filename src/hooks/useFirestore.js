@@ -4,7 +4,7 @@ import { db } from '@/firebase/firebaseConfig';
 
 export default function useFirestore() {
   /*** Get All Documents from a Collection ***/
-  let getCollection = (collectionName, _q) => {
+  let getCollection = (collectionName, _q, search) => {
     let qRef = useRef(_q).current;
     let [data, setData] = useState([]);
     let [loading, setLoading] = useState(false);
@@ -29,11 +29,18 @@ export default function useFirestore() {
           let document = { id: doc.id, ...doc.data() };
           collection.push(document);
         });
-        setData(collection);
+        if (search?.field && search?.value) {
+          let searchedData = collection.filter((doc) => {
+            return doc[search?.field].match(new RegExp(search?.value, 'i'));
+          });
+          setData(searchedData);
+        } else {
+          setData(collection);
+        }
         setLoading(false);
         setError('');
       });
-    }, [qRef]);
+    }, [qRef, search?.field, search?.value]);
     return { data, loading, error };
   };
 

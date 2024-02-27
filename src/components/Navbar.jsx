@@ -6,8 +6,8 @@ import darkIcon from '@/assets/dark.svg';
 import useSignout from '../hooks/useSignout';
 import { AuthContext } from '../contexts/AuthContext';
 
-export default function Navbar() {
-  let [search, setSearch] = useState('');
+export default function Navbar({ searchValue }) {
+  let [search, setSearch] = useState(searchValue);
   let navigate = useNavigate();
   let handleSearch = (e) => {
     if (e.key == 'Enter') {

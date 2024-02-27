@@ -1,15 +1,15 @@
 import React, { useContext } from 'react';
 import trash from '@/assets/trash.svg';
 import pencil from '@/assets/pencil.svg';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useTheme from '../hooks/useTheme';
 import useFirestore from '../hooks/useFirestore';
 import { AuthContext } from '../contexts/AuthContext';
 
 export default function BookList() {
-  // let location = useLocation();
-  // let params = new URLSearchParams(location.search);
-  // let search = params.get('search');
+  let location = useLocation();
+  let params = new URLSearchParams(location.search);
+  let search = params.get('search');
 
   // let { data: books, loading, error } = useFetch(`http://localhost:3001/books${search ? `?q=${search}` : ''}`);
   let { getCollection, deleteDocument } = useFirestore();
@@ -23,7 +23,7 @@ export default function BookList() {
     await deleteDocument('books', id);
   };
   let { user } = useContext(AuthContext);
-  let { data: books, loading, error } = getCollection('books', ['uid', '==', user.uid]);
+  let { data: books, loading, error } = getCollection('books', ['uid', '==', user.uid], { field: 'title', value: search });
 
   if (error) {
     return <p>{error}</p>;
@@ -60,7 +60,6 @@ export default function BookList() {
                       src={pencil}
                       alt=''
                     />
-
                     <img src={trash} alt='' onClick={(e) => deleteBook(e, b.id)} />
                   </div>
                 </div>
